@@ -1,0 +1,45 @@
+.cxlt-autocomplete {
+    display: inline;
+    position: relative;
+}
+
+.cxlt-autocomplete-input {
+    font-size: 14px;
+    padding-left: 10px;
+    color:#555;
+}
+
+.cxlt-autocomplete-drop {
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #eee;
+    border-top: none;
+    max-height: 300px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    z-index: 99;
+}
+
+.cxlt-autocomplete-drop ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.cxlt-autocomplete-drop ul>li {
+    height: 30px;
+    line-height: 30px;
+    padding-left: 10px;
+    color:#555;
+}
+
+.cxlt-autocomplete-drop ul>li:hover {
+    cursor: pointer;
+    background-color: #007ed2;
+    color: #fff;
+}
+
+.cxlt-autocomplete-drop ul >li span.highlight{
+    font-size: 15px;
+    color:orange;
+}
