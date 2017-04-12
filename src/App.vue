@@ -7,7 +7,8 @@
                             :options="options"
                             @select="select"
                             :input-class="'form-control'"
-                            :less-min-action="1"></cxlt-auto-complete>
+                            :less-min-action="0"
+                            :highlight="true"></cxlt-auto-complete>
     </div>
 </template>
 
@@ -19,25 +20,24 @@ export default {
     name: 'App',
     data: () => {
         return {
-            options:
-            [{
-                id: 1,
-                name: '中信达名车'
-            }, {
-                id: 2,
-                name: '恒程致远精品车'
-            }
-            ],
+            options: null,
             displayField: 'name'
         }
     },
     methods: {
         change(value) {
             // console.log('app ' + value)
-            this.options.push({
-                id: this.options.length + 1,
-                name: 'abbbbaaccceddsaa'
-            })
+            // this.options.push({
+            //     id: this.options.length + 1,
+            //     name: 'abbbbaaccceddsaa'
+            // })
+            this.options = [{
+                id: 100,
+                name: '100'
+            }, {
+                id: 200,
+                name: '200'
+            }]
         },
         select(o) {
             console.log(o)

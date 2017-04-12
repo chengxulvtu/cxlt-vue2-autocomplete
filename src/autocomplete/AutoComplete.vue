@@ -8,11 +8,11 @@
                :class="[stylePrefix+'-input',inputClass]" />
         <div :class="[stylePrefix+'-drop']"
              :style="{width:width+'px'}"
-             v-if="showDrop">
+             v-if="showDrop && options">
             <ul>
                 <li v-for="o in options"
                     @mousedown="selected(o)"
-                    v-html="highlight(o[displayField])"></li>
+                    v-html="highlightText(o[displayField])"></li>
             </ul>
         </div>
     </div>
@@ -63,6 +63,10 @@ export default {
         stylePrefix: {
             type: String,
             default: 'cxlt-autocomplete'
+        },
+        highlight: {
+            type: Boolean,
+            default: false
         }
     },
     mounted() {
@@ -120,8 +124,11 @@ export default {
                 this.input.focus()
             }, 100)
         },
-        highlight(option) {
-            return option.split(this.inputText).join('<span class="highlight">' + this.inputText + '</span>')
+        highlightText(option) {
+            if (option && this.highlight) {
+                return option.split(this.inputText).join('<span class="highlight">' + this.inputText + '</span>')
+            }
+            return option
         }
     },
     watch: {
