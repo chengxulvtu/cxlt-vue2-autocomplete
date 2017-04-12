@@ -7,12 +7,14 @@
                ref="CxltAutoCompleteInput"
                :class="[stylePrefix+'-input',inputClass]" />
         <div :class="[stylePrefix+'-drop']"
-             :style="{width:width+'px'}"
-             v-if="showDrop && options">
+             :style="{width:width+'px','max-height':dropMaxHeight+'px'}"
+             v-show="showDrop && options"
+             ref="CxltAutoCompleteDrop">
             <ul>
-                <li v-for="o in options"
+                <li v-for="(o,index) in options"
                     @mousedown="selected(o)"
-                    v-html="displayText(o)"></li>
+                    v-html="displayText(o)"
+                    :class="{hover:dropIndex===index}"></li>
             </ul>
         </div>
     </div>
@@ -29,8 +31,12 @@ export default {
             showDrop: false,
             focusInput: false,
             input: null,
+            drop: null,
+            liHeight: null,
             innerInputText: null,
-            isSelect: false
+            isSelect: false,
+            hasInputText: false,
+            dropIndex: -1
         }
     },
     props: {
@@ -70,11 +76,16 @@ export default {
         },
         format: {
             type: Function
+        },
+        maxItems: {
+            type: Number,
+            default: 10
         }
     },
     mounted() {
         this.input = this.$refs.CxltAutoCompleteInput
         this.width = this.input.clientWidth
+        this.drop = this.$refs.CxltAutoCompleteDrop
     },
     computed: {
         inputText: {
@@ -84,6 +95,9 @@ export default {
             set: function (val) {
                 if (this.sto) {
                     clearTimeout(this.sto)
+                }
+                if (!this.hasInputText) {
+                    this.hasInputText = true
                 }
                 if (val.length >= this.minLength) {
                     this.sto = setTimeout(() => {
@@ -100,11 +114,23 @@ export default {
                     }
                 }
             }
+        },
+        dropMaxHeight() {
+            if (this.liHeight) {
+                return this.liHeight * this.maxItems
+            } else {
+                return 0
+            }
         }
     },
     methods: {
         focus() {
             this.focusInput = true
+            if (this.inputText) {
+                this.hasInputText = true
+            } else {
+                this.hasInputText = false
+            }
             if (!this.isSelect && this.lessMinAction === 1) {
                 this.$emit('change')
             }
@@ -112,14 +138,35 @@ export default {
         blur() {
             this.focusInput = false
             this.showDrop = false
+            if (this.hasInputText) {
+                this.$emit('select')
+            }
+            this.hasInputText = false
         },
-        keyup() {
+        keyup(e) {
             if (this.focusInput) {
-                this.inputText = this.input.value
+                if (e.which === 38) {
+                    // up
+                    if (this.showDrop) {
+                        --this.dropIndex
+                        if (this.dropIndex < 0) {
+                            this.dropIndex = this.options.length - 1
+                        }
+                    }
+                } else if (e.which === 40) {
+                    if (this.showDrop) {
+                        this.dropIndex = ++this.dropIndex % this.options.length
+                    }
+                } else if (e.which === 13) {
+                    // enter
+                    this.selected(this.options[this.dropIndex])
+                } else {
+                    this.inputText = this.input.value
+                }
             }
         },
         selected(o) {
-            this.input.focus()
+            this.hasInputText = false
             this.input.value = o[this.displayField]
             this.$emit('select', o)
             this.showDrop = false
@@ -149,10 +196,26 @@ export default {
     },
     watch: {
         options(ops) {
-            if (ops && ops.length > 0) {
+            if (!this.liHeight && ops && ops.length) {
+                setTimeout(() => {
+                    this.liHeight = this.drop.childNodes[0].childNodes[0].clientHeight
+                    console.log(this.liHeight)
+                }, 100)
+            }
+            if (ops && ops.length > 0 && !this.isSelect) {
                 this.showDrop = true
             } else {
                 this.showDrop = false
+            }
+        },
+        showDrop(sd) {
+            this.dropIndex = -1
+        },
+        dropIndex(index) {
+            if (index > this.maxItems - 1) {
+                this.drop.scrollTop = (index - (this.maxItems - 1)) * this.liHeight
+            } else {
+                this.drop.scrollTop = 0
             }
         }
     }

@@ -15,7 +15,6 @@
     background-color: #fff;
     border: 1px solid #eee;
     border-top: none;
-    max-height: 300px;
     overflow-x: hidden;
     z-index: 99;
 }
@@ -34,13 +33,12 @@
     text-align: left;
 }
 
-.cxlt-autocomplete-drop ul>li:hover {
+.cxlt-autocomplete-drop ul>li:hover,.cxlt-autocomplete-drop ul>li.hover {
     cursor: pointer;
     background-color: #007ed2;
     color: #fff;
 }
 
 .cxlt-autocomplete-drop ul >li span.highlight{
-    font-size: 15px;
     color:orange;
 }
