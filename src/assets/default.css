@@ -11,6 +11,7 @@
 
 .cxlt-autocomplete-drop {
     position: absolute;
+    left:0;
     background-color: #fff;
     border: 1px solid #eee;
     border-top: none;
@@ -31,6 +32,7 @@
     line-height: 30px;
     padding-left: 10px;
     color:#555;
+    text-align: left;
 }
 
 .cxlt-autocomplete-drop ul>li:hover {
