@@ -7,8 +7,9 @@
                             :options="options"
                             @select="select"
                             :input-class="'form-control'"
-                            :less-min-action="0"
-                            :highlight="true"></cxlt-auto-complete>
+                            :less-min-action="1"
+                            :highlight="true"
+                            :format="format"></cxlt-auto-complete>
     </div>
 </template>
 
@@ -32,15 +33,18 @@ export default {
             //     name: 'abbbbaaccceddsaa'
             // })
             this.options = [{
-                id: 100,
-                name: '100'
+                id: 1,
+                name: 'dealer qd'
             }, {
-                id: 200,
-                name: '200'
+                id: 2,
+                name: 'dealer jn'
             }]
         },
         select(o) {
             console.log(o)
+        },
+        format(o) {
+            return o.name + '-' + o.id
         }
     }
 }

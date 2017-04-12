@@ -12,7 +12,7 @@
             <ul>
                 <li v-for="o in options"
                     @mousedown="selected(o)"
-                    v-html="highlightText(o[displayField])"></li>
+                    v-html="displayText(o)"></li>
             </ul>
         </div>
     </div>
@@ -67,6 +67,9 @@ export default {
         highlight: {
             type: Boolean,
             default: false
+        },
+        format: {
+            type: Function
         }
     },
     mounted() {
@@ -82,13 +85,20 @@ export default {
                 if (this.sto) {
                     clearTimeout(this.sto)
                 }
-                this.sto = setTimeout(() => {
-                    if (this.isSelect) {
-                        this.isSelect = false
+                if (val.length >= this.minLength) {
+                    this.sto = setTimeout(() => {
+                        if (this.isSelect) {
+                            this.isSelect = false
+                        }
+                        this.innerInputText = val
+                        this.$emit('change', this.innerInputText)
+                    }, this.delay)
+                } else {
+                    if (this.lessMinAction === 1) {
+                        this.innerInputText = val
+                        this.$emit('change')
                     }
-                    this.innerInputText = val
-                    this.$emit('change', this.innerInputText)
-                }, this.delay)
+                }
             }
         }
     },
@@ -101,17 +111,11 @@ export default {
         },
         blur() {
             this.focusInput = false
+            this.showDrop = false
         },
         keyup() {
             if (this.focusInput) {
-                var value = this.input.value
-                if (value.length >= this.minLength) {
-                    this.inputText = value
-                } else {
-                    if (this.lessMinAction === 1) {
-                        this.$emit('change')
-                    }
-                }
+                this.inputText = this.input.value
             }
         },
         selected(o) {
@@ -124,8 +128,20 @@ export default {
                 this.input.focus()
             }, 100)
         },
+        displayText(o) {
+            var text = ''
+            if (this.format) {
+                text = this.format(o)
+            } else {
+                text = o[this.displayField]
+            }
+            if (this.highlight) {
+                text = this.highlightText(text)
+            }
+            return text
+        },
         highlightText(option) {
-            if (option && this.highlight) {
+            if (option && this.highlight && this.inputText) {
                 return option.split(this.inputText).join('<span class="highlight">' + this.inputText + '</span>')
             }
             return option
